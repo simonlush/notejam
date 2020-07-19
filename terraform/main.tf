@@ -35,6 +35,7 @@ module "private_subnets_ec2" {
   vpc_id             = module.vpc.vpc_id
   cidr_block         = var.private_cidr_block_ec2
   type               = "private"
+
   az_ngw_ids = module.public_subnets_lb.az_ngw_ids
 }
 #Private subnet for rds
@@ -105,7 +106,7 @@ module "elastic_beanstalk_environment_prod" {
 
   rolling_update_enabled  = true
   rolling_update_type     = "Health"
-  updating_min_in_service = 0
+  updating_min_in_service = 1
   updating_max_batch      = 1
   healthcheck_url         = "/"
   application_port        = 80
@@ -205,7 +206,7 @@ module "elastic_beanstalk_environment_dev" {
 
   rolling_update_enabled  = true
   rolling_update_type     = "Health"
-  updating_min_in_service = 0
+  updating_min_in_service = 1
   updating_max_batch      = 1
   healthcheck_url         = "/"
   application_port        = 80
@@ -257,7 +258,7 @@ module "rds_instance_dev" {
   subnet_ids                  = values(module.private_subnets_rds.az_subnet_ids)  
   security_group_ids          = [module.elastic_beanstalk_environment_dev.security_group_id]
   apply_immediately           = true
-  backup_retention_period     = 0
+  backup_retention_period     = 35
   backup_window               = "22:00-03:00"
   copy_tags_to_snapshot       = true
 }
@@ -307,7 +308,7 @@ module "elastic_beanstalk_environment_test" {
 
   rolling_update_enabled  = true
   rolling_update_type     = "Health"
-  updating_min_in_service = 0
+  updating_min_in_service = 1
   updating_max_batch      = 1
   healthcheck_url         = "/"
   application_port        = 80
@@ -358,7 +359,7 @@ module "rds_instance_test" {
   subnet_ids                  = values(module.private_subnets_rds.az_subnet_ids)  
   security_group_ids          = [module.elastic_beanstalk_environment_test.security_group_id]
   apply_immediately           = true
-  backup_retention_period     = 0
+  backup_retention_period     = 35
   backup_window               = "22:00-03:00"
   copy_tags_to_snapshot       = true
 }
